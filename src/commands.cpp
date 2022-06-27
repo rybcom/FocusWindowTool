@@ -9,8 +9,9 @@ namespace commands
 	namespace
 	{
 
-		static HWND focused_window;
+		static HWND focused_window = nullptr;
 		static std::string searched_title;
+		constexpr bool ShowMaximized{ true };
 
 		std::string to_lower(std::string_view text)
 		{
@@ -53,6 +54,11 @@ namespace commands
 		{
 			::SetForegroundWindow(focused_window);
 			::SetActiveWindow(focused_window);
+
+			if constexpr (ShowMaximized)
+			{
+				::ShowWindowAsync(focused_window, SW_SHOWMAXIMIZED);
+			}
 		}
 	}
 
@@ -64,8 +70,7 @@ namespace commands
 
 			if (dwStyle & WS_MINIMIZE)
 			{
-				::ShowWindowAsync(focused_window, SW_NORMAL);
-				std::cout << "unminimizing window \n";
+				::ShowWindowAsync(focused_window, ShowMaximized ? SW_SHOWMAXIMIZED : SW_SHOWNORMAL);
 			}
 		}
 	}
